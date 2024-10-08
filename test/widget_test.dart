@@ -1,28 +1,44 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:scheduling_app/main.dart';
+import 'package:mockito/mockito.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_core/firebase_core.dart';
 
+// Mock classes for Firebase and Google Sign-In
+class MockFirebaseAuth extends Mock implements FirebaseAuth {}
+class MockGoogleSignIn extends Mock implements GoogleSignIn {}
+class MockFirebaseApp extends Mock implements FirebaseApp {}
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  // Mock Firebase initialization
+  setUpAll(() async {
+    // Skipping real Firebase initialization in tests
+    TestWidgetsFlutterBinding.ensureInitialized();
+  });
 
-    // Verify that our counter starts at 0.
+  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+    // Mock FirebaseAuth and GoogleSignIn
+    final mockAuth = MockFirebaseAuth();
+    final mockGoogleSignIn = MockGoogleSignIn();
+
+    // Build the app with the MyHomePage widget
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MyHomePage(title: 'Test Title'),
+      ),
+    );
+
+    // Verify that the counter starts at 0
     expect(find.text('0'), findsOneWidget);
     expect(find.text('1'), findsNothing);
 
-    // Tap the '+' icon and trigger a frame.
+    // Tap the '+' icon and trigger a frame
     await tester.tap(find.byIcon(Icons.add));
     await tester.pump();
 
-    // Verify that our counter has incremented.
+    // Verify that the counter has incremented
     expect(find.text('0'), findsNothing);
     expect(find.text('1'), findsOneWidget);
   });
